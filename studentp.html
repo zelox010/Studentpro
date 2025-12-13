@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Student Portal Replica Updated</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<style>
+    :root {
+        --primary-purple: #6a4f9b;
+        --icon-bg-purple: #5e4b8b;
+        --bg-color: #f2f2f2;
+        --text-dark: #333333;
+        --text-grey: #666666;
+        --text-light-grey: #999999;
+        --active-blue-bg: #e3f2fd;
+        --active-blue-text: #1976d2;
+        --card-radius: 12px;
+        --font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+        
+        /* New Colors for Overlay */
+        --bar-green: #7cb342;
+        --bar-yellow: #fdd835;
+        --badge-green-bg: #e8f5e9;
+        --badge-green-text: #2e7d32;
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+        font-family: var(--font-family);
+        background-color: var(--bg-color);
+        color: var(--text-dark);
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+    }
+
+    /* Mobile Container Simulation */
+    .app-container {
+        width: 100%;
+        max-width: 480px;
+        height: 100%;
+        background-color: var(--bg-color);
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+
+    /* Header */
+    .header {
+        background-color: #ffffff;
+        padding: 16px 20px;
+        display: flex;
+        align-items: center;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        z-index: 10;
+        height: 60px;
+    }
+
+    .menu-btn {
+        font-size: 20px;
+        margin-right: 20px;
+        cursor: pointer;
+        color: #444;
+    }
+
+    .header-title {
+        font-size: 18px;
+        font-weight: 500;
+        color: #222;
+    }
+
+    /* Scrollable Content Area */
+    .content-area {
+        flex: 1;
+        overflow-y: auto;
+        padding: 16px;
+        position: relative;
+    }
+
+    .view-section {
+        display: none;
+        padding-bottom: 20px;
+    }
+
+    .view-section.active {
+        display: block;
+    }
+
+    /* --- SIDEBAR (DRAWER) --- */
+    .sidebar-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 99;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+    }
+
+    .sidebar-overlay.open {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .sidebar {
+        position: absolute;
+        top: 0;
+        left: -85%; /* Hidden by default */
+        width: 85%;
+        height: 100%;
+        background: #fff;
+        z-index: 100;
+        transition: left 0.3s ease;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sidebar.open {
+        left: 0;
+    }
+
+    .profile-section {
+        padding: 30px 20px 20px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background-color: #ddd;
+        margin-bottom: 12px;
+        overflow: hidden;
+    }
+    
+    .avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .user-name {
+        font-size: 18px;
+        font-weight: 500;
+        color: #222;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+    }
+
+    .user-org {
+        font-size: 13px;
+        color: #555;
+    }
+
+    .nav-menu {
+        padding: 10px 10px;
+        overflow-y: auto;
+    }
+
+    .nav-item {
+        display: flex;
+        align-items: center;
+        padding: 12px 16px;
+        margin-bottom: 4px;
+        border-radius: 50px; /* Pill shape */
+        cursor: pointer;
+        color: #555;
+        font-size: 15px;
+        font-weight: 400;
+    }
+
+    .nav-item i {
+        width: 24px;
+        margin-right: 16px;
+        font-size: 18px;
+        text-align: center;
+    }
+
+    .nav-item.active {
+        background-color: var(--active-blue-bg);
+        color: var(--active-blue-text);
+        font-weight: 500;
+    }
+
+    /* --- GENERIC CARD STYLES --- */
+    .date-header {
+        text-align: center;
+        font-size: 12px;
+        color: var(--text-grey);
+        margin: 20px 0 10px;
+    }
+
+    .card {
+        background: #fff;
+        border-radius: var(--card-radius);
+        padding: 16px;
+        margin-bottom: 12px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        display: flex;
+        align-items: flex-start;
+        cursor: pointer; /* Added cursor pointer for clickable cards */
+        transition: transform 0.1s ease;
+    }
+
+    .card:active {
+        transform: scale(0.98);
+    }
+
+    /* --- SCHEDULES STYLES --- */
+    .top-pill-nav {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 20px;
+        margin-top: 10px;
+    }
+
+    .pill {
+        padding: 8px 24px;
+        border-radius: 20px;
+        border: 1px solid #ccc;
+        font-size: 13px;
+        color: var(--text-grey);
+        background: transparent;
+    }
+
+    .pill.active {
+        border-color: var(--icon-bg-purple);
+        color: var(--icon-bg-purple);
+        background: rgba(94, 75, 139, 0.05);
+    }
+
+    .schedule-icon-circle {
+        width: 40px;
+        height: 40px;
+        min-width: 40px;
+        background-color: var(--icon-bg-purple);
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-right: 16px;
+    }
+
+    .schedule-icon-circle i {
+        color: white;
+        font-size: 18px;
+    }
+
+    .schedule-content {
+        flex: 1;
+    }
+
+    .schedule-title {
+        font-size: 15px;
+        font-weight: 500;
+        color: #222;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        line-height: 1.3;
+    }
+
+    .schedule-meta {
+        font-size: 12px;
+        color: #444;
+        margin-bottom: 2px;
+        line-height: 1.4;
+    }
+
+    .schedule-topics {
+        font-size: 12px;
+        color: #444;
+        margin-top: 4px;
+        line-height: 1.4;
+    }
+
+    .no-more {
+        text-align: center;
+        font-size: 12px;
+        color: #aaa;
+        margin-top: 20px;
+    }
+
+    /* --- PERFORMANCES STYLES --- */
+    .perf-title {
+        font-size: 15px;
+        font-weight: 500;
+        color: #222;
+        margin-bottom: 4px;
+        line-height: 1.3;
+        text-transform: uppercase;
+    }
+
+    .perf-sub {
+        font-size: 12px;
+        color: var(--text-grey);
+        margin-bottom: 8px;
+    }
+
+    .perf-stats {
+        display: flex;
+        gap: 15px;
+        font-size: 12px;
+        color: var(--text-grey);
+    }
+
+    /* --- MESSAGES STYLES --- */
+    .msg-card {
+        background: #fff;
+        border-radius: var(--card-radius);
+        padding: 16px;
+        margin-bottom: 0px; /* Spacing handled by date headers */
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    .msg-text {
+        font-size: 14px;
+        color: #222;
+        line-height: 1.5;
+        white-space: pre-line; /* Preserves line breaks */
+    }
+
+    .msg-time {
+        text-align: right;
+        font-size: 11px;
+        color: #999;
+        margin-top: 8px;
+    }
+
+    /* --- PERFORMANCE DETAIL OVERLAY --- */
+    .perf-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: var(--bg-color);
+        z-index: 200;
+        display: flex;
+        flex-direction: column;
+        transform: translateX(100%);
+        transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    .perf-overlay.active {
+        transform: translateX(0);
+    }
+
+    .overlay-header {
+        background: #fff;
+        padding: 16px 20px;
+        display: flex;
+        align-items: center;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        flex-shrink: 0;
+    }
+
+    .back-btn {
+        font-size: 20px;
+        color: #333;
+        margin-right: 20px;
+        cursor: pointer;
+    }
+
+    .overlay-content {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+    }
+
+    /* Detail Card inside Overlay */
+    .detail-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 24px 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        margin-bottom: 20px;
+    }
+
+    .detail-header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 20px;
+    }
+
+    .detail-subject {
+        font-size: 18px;
+        font-weight: 500;
+        color: #222;
+        margin-bottom: 4px;
+    }
+
+    .detail-date {
+        font-size: 13px;
+        color: #888;
+    }
+
+    .present-badge {
+        background-color: var(--badge-green-bg);
+        color: var(--badge-green-text);
+        font-size: 12px;
+        font-weight: 500;
+        padding: 6px 14px;
+        border-radius: 6px;
+    }
+
+    .score-box {
+        background-color: #f9f9f9;
+        border-radius: 12px;
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+
+    .score-item h4 {
+        font-size: 13px;
+        color: #666;
+        font-weight: 400;
+        margin-bottom: 8px;
+    }
+
+    .score-item .value {
+        font-size: 22px;
+        font-weight: 400;
+        color: #222;
+    }
+
+    /* Progress Bars */
+    .bar-group {
+        margin-bottom: 20px;
+    }
+
+    .bar-label {
+        font-size: 13px;
+        color: #777;
+        margin-bottom: 6px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .progress-track {
+        height: 8px;
+        background-color: #eee;
+        border-radius: 10px;
+        overflow: hidden;
+        width: 100%;
+    }
+
+    .progress-fill {
+        height: 100%;
+        border-radius: 10px;
+        width: 0%; /* Initial state for animation */
+        transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .fill-green { background-color: var(--bar-green); }
+    .fill-yellow { background-color: var(--bar-yellow); }
+
+    .detail-topics {
+        margin-top: 30px;
+        font-size: 14px;
+        color: #333;
+        line-height: 1.6;
+    }
+    
+    .detail-topics strong {
+        display: block;
+        margin-bottom: 5px;
+        color: #222;
+    }
+
+    /* Hide scrollbar for cleaner look */
+    ::-webkit-scrollbar {
+        width: 0px;
+        background: transparent;
+    }
+
+</style>
+</head>
+<body>
+
+<div class="app-container">
+
+    <div class="header">
+        <div class="menu-btn" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </div>
+        <div class="header-title" id="headerTitle">Messages</div>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="profile-section">
+            <div class="avatar">
+                <img src="https://ui-avatars.com/api/?name=Abaan+Shaikh&background=ccc&color=fff&size=150" alt="Profile">
+            </div>
+            <div class="user-name">ABAAN SHAIKH</div>
+            <div class="user-org">Eureka Careers LLP</div>
+        </div>
+        <div class="nav-menu">
+            <div class="nav-item active" onclick="switchView('Messages', this)">
+                <i class="fas fa-comment-alt"></i> Messages
+            </div>
+            <div class="nav-item" onclick="switchView('Schedules', this)">
+                <i class="fas
+                fa-calendar-alt"></i> Schedules
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-check-square"></i> Attendances
+            </div>
+            <div class="nav-item">
+                <i class="far fa-clock"></i> Punches
+            </div>
+            <div class="nav-item" onclick="switchView('Performances', this)">
+                <i class="fas fa-trophy"></i> Performances
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-book-open"></i> Assignments
+            </div>
+            <div class="nav-item">
+                <i class="far fa-file-alt"></i> Documents
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-video"></i> Videos
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-graduation-cap"></i> Admissions
+            </div>
+        </div>
+    </div>
+
+    <div class="content-area">
+
+        <div id="view-Messages" class="view-section active">
+            
+            <div class="date-header">10 Oct 2025</div>
+            <div class="msg-card">
+                <div class="msg-text">Dear Mrs. HEENA SHAIKH,
+ABAAN SHAIKH was absent for lectures conducted on Fri, 10 Oct.
+Eureka Careers LLP
+- Classpro</div>
+                <div class="msg-time">6:51 PM</div>
+            </div>
+
+            <div class="date-header">9 Oct 2025</div>
+            <div class="msg-card">
+                <div class="msg-text">Dear Mrs. HEENA SHAIKH,
+ABAAN SHAIKH was absent for lectures conducted on Thu, 09 Oct.
+Eureka Careers LLP
+- Classpro</div>
+                <div class="msg-time">6:43 PM</div>
+            </div>
+
+            <div class="date-header">8 Oct 2025</div>
+            <div class="msg-card">
+                <div class="msg-text">Dear Mrs. HEENA SHAIKH,
+ABAAN SHAIKH was absent for lectures conducted on Wed, 08 Oct.
+Eureka Careers LLP
+- Classpro</div>
+                <div class="msg-time">7:05 PM</div>
+            </div>
+
+            <div class="date-header">7 Oct 2025</div>
+        </div>
+
+        <div id="view-Schedules" class="view-section">
+            
+            <div class="top-pill-nav">
+                <div class="pill active">12 Dec 2025</div>
+                <div class="pill">18 Dec 2025</div>
+            </div>
+
+            <div class="date-header">12 Dec 2025</div>
+
+            <div class="card">
+                <div class="schedule-icon-circle">
+                    <i class="fas fa-pencil-alt"></i>
+                </div>
+                <div class="schedule-content">
+                    <div class="schedule-title">2ND UNIT TEST - GEOGRAPHY</div>
+                    <div class="schedule-meta">Test • 03:15 PM - 04:30 PM</div>
+                    <div class="schedule-topics">Topics: 6 - Properties of sea water, 10 - Urbanisation, 12 - Tourism</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="schedule-icon-circle">
+                    <i class="fas fa-book"></i>
+                </div>
+                <div class="schedule-content">
+                    <div class="schedule-title">IX SB Algebra</div>
+                    <div class="schedule-meta">Lecture • 04:30 PM - 06:20 PM</div>
+                    <div class="schedule-meta">Prof. RONAK PANCHAL</div>
+                    <div class="schedule-topics">Topics: 7 - Statistics</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="schedule-icon-circle">
+                    <i class="fas fa-book"></i>
+                </div>
+                <div class="schedule-content">
+                    <div class="schedule-title">IX SB Geometry</div>
+                    <div class="schedule-meta">Lecture • 06:30 PM - 08:00 PM</div>
+                    <div class="schedule-meta">Mr. Kiran Surti</div>
+                    <div class="schedule-topics">Topics:</div>
+                </div>
+            </div>
+
+            <div class="no-more">No more schedules</div>
+
+        </div>
+
+        <div id="view-Performances" class="view-section">
+            
+            <div class="date-header">13 Dec, 2025</div>
+            <div class="card" onclick="openPerfDetails(this)" 
+                 data-subject="English" 
+                 data-fulltitle="CHAPTERWISE TEST- ENGLISH" 
+                 data-date="13 Dec 2025" 
+                 data-marks="19.5" 
+                 data-total="25.0" 
+                 data-percent="78.0" 
+                 data-avg="16.5" 
+                 data-topics="Unit 3 - Poems, Grammar - Tenses">
+                <div class="schedule-icon-circle">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <div class="schedule-content">
+                    <div class="perf-title">CHAPTERWISE TEST- ENGLISH (English)</div>
+                    <div class="perf-sub">English</div>
+                    <div class="perf-stats">
+                        <span>Marks: 19.5</span>
+                        <span>78.0%</span>
+                        <span>Rank: 2</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="date-header">01 Dec, 2025</div>
+            <div class="card" onclick="openPerfDetails(this)" 
+                 data-subject="Geometry" 
+                 data-fulltitle="CHAPTERWISE TEST- GEOMETRY" 
+                 data-date="01 Dec 2025" 
+                 data-marks="16.0" 
+                 data-total="20.0" 
+                 data-percent="80.0" 
+                 data-avg="14.91" 
+                 data-topics="7 - Co-ordinate Geometry, 8 - Trigonometry">
+                <div class="schedule-icon-circle">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <div class="schedule-content">
+                    <div class="perf-title">CHAPTERWISE TEST- GEOMETRY (Geometry)</div>
+                    <div class="perf-sub">Geometry</div>
+                    <div class="perf-stats">
+                        <span>Marks: 16.0</span>
+                        <span>80.0%</span>
+                        <span>Rank: 15</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="date-header">29 Nov, 2025</div>
+            <div class="card" onclick="openPerfDetails(this)" 
+                 data-subject="Marathi" 
+                 data-fulltitle="CHAPTERWISE TEST- MARATHI" 
+                 data-date="29 Nov 2025" 
+                 data-marks="4.5" 
+                 data-total="20.0" 
+                 data-percent="22.5" 
+                 data-avg="11.2" 
+                 data-topics="Lesson 4 - Nati, Poem 3">
+                <div class="schedule-icon-circle">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <div class="schedule-content">
+                    <div class="perf-title">CHAPTERWISE TEST- MARATHI (Marathi)</div>
+                    <div class="perf-sub">Marathi</div>
+                    <div class="perf-stats">
+                        <span>Marks: 4.5</span>
+                        <span>22.5%</span>
+                        <span>Rank: 24</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="date-header">24 Nov, 2025</div>
+            <div class="card" onclick="openPerfDetails(this)" 
+                 data-subject="Science-II" 
+                 data-fulltitle="CHAPTERWISE TEST- SCIENCE 2" 
+                 data-date="24 Nov 2025" 
+                 data-marks="7.5" 
+                 data-total="15.0" 
+                 data-percent="50.0" 
+                 data-avg="9.5" 
+                 data-topics="Life Processes in Living Organisms Part 1">
+                <div class="schedule-icon-circle">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <div class="schedule-content">
+                    <div class="perf-title">CHAPTERWISE TEST- SCIENCE 2 (Science-II)</div>
+                    <div class="perf-sub">Science-II</div>
+                    <div class="perf-stats">
+                        <span>Marks: 7.5</span>
+                        <span>50.0%</span>
+                        <span>Rank: 30</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="date-header">15 Nov, 2025</div>
+            <div class="card" onclick="openPerfDetails(this)" 
+                 data-subject="Science-I" 
+                 data-fulltitle="CHAPTERWISE TEST- SCIENCE" 
+                 data-date="15 Nov 2025" 
+                 data-marks="12.0" 
+                 data-total="15.0" 
+                 data-percent="80.0" 
+                 data-avg="10.8" 
+                 data-topics="Heat, Refraction of light">
+                <div class="schedule-icon-circle">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <div class="schedule-content">
+                    <div class="perf-title">CHAPTERWISE TEST- SCIENCE (Science-I)</div>
+                    <div class="perf-sub">Science-I</div>
+                    <div class="perf-stats">
+                        <span>Marks: 12.0</span>
+                        <span>80.0%</span>
+                        <span>Rank: 13</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="date-header">11 Nov, 2025</div>
+            <div class="card" onclick="openPerfDetails(this)" 
+                 data-subject="Algebra" 
+                 data-fulltitle="CHAPTERWISE TEST- ALGEBRA" 
+                 data-date="11 Nov 2025" 
+                 data-marks="12.0" 
+                 data-total="20.0" 
+                 data-percent="45.0" 
+                 data-avg="15.5" 
+                 data-topics="Linear Equations in Two Variables">
+                <div class="schedule-icon-circle">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <div class="schedule-content">
+                    <div class="perf-title">CHAPTERWISE TEST- ALGEBRA (Algebra)</div>
+                    <div class="perf-sub">Algebra</div>
+                    <div class="perf-stats">
+                        <span>Marks: 12.0</span>
+                        <span>45.0%</span>
+                        <span>Rank: 10</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="perf-overlay" id="perfOverlay">
+        <div class="header overlay-header">
+            <div class="back-btn" onclick="closePerfDetails()">
+                <i class="fas fa-arrow-left"></i>
+            </div>
+            <div class="header-title">Performance</div>
+        </div>
+
+        <div class="overlay-content">
+            <div class="detail-card">
+                <div class="detail-header-row">
+                    <div>
+                        <div class="detail-subject" id="ovSubject">Geometry</div>
+                        <div class="detail-date" id="ovDate">01 Dec 2025</div>
+                    </div>
+                    <div class="present-badge">Present</div>
+                </div>
+
+                <div class="score-box">
+                    <div class="score-item">
+                        <h4>Marks Obtained</h4>
+                        <div class="value" id="ovMarksDisplay">16.0/20.0</div>
+                    </div>
+                    <div class="score-item">
+                        <h4>Percentage</h4>
+                        <div class="value" id="ovPercentDisplay">80.0%</div>
+                    </div>
+                </div>
+
+                <div class="bar-group">
+                    <div class="bar-label">
+                        <span>Marks Obtained: <span id="ovMarksVal">16.0</span></span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill fill-green" id="barObtained" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="bar-group">
+                    <div class="bar-label">
+                        <span>Average Marks: <span id="ovAvgVal">14.91</span></span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill fill-yellow" id="barAvg" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="bar-group">
+                    <div class="bar-label">
+                        <span>Highest Marks: <span id="ovHighVal">20.0</span></span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill fill-green" style="width: 100%"></div>
+                    </div>
+                </div>
+
+                <div class="detail-topics">
+                    <strong>Topics:</strong>
+                    <span id="ovTopics">7 - Co-ordinate Geometry</span>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        
+        if (sidebar.classList.contains('open')) {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('open');
+        } else {
+            sidebar.classList.add('open');
+            overlay.classList.add('open');
+        }
+    }
+
+    function switchView(viewName, element) {
+        // Update Title
+        document.getElementById('headerTitle').innerText = viewName;
+
+        // Hide all views
+        const views = document.querySelectorAll('.view-section');
+        views.forEach(v => v.classList.remove('active'));
+
+        // Show selected view
+        document.getElementById('view-' + viewName).classList.add('active');
+
+        // Update Sidebar Active State
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(n => n.classList.remove('active'));
+        if(element) {
+            element.classList.add('active');
+        }
+
+        // Close sidebar
+        toggleSidebar();
+    }
+
+    /* --- PERFORMANCE OVERLAY LOGIC --- */
+    function openPerfDetails(cardElement) {
+        const overlay = document.getElementById('perfOverlay');
+        
+        // Extract data from attributes
+        const subject = cardElement.getAttribute('data-subject');
+        const date = cardElement.getAttribute('data-date');
+        const marks = parseFloat(cardElement.getAttribute('data-marks'));
+        const total = parseFloat(cardElement.getAttribute('data-total'));
+        const percent = cardElement.getAttribute('data-percent');
+        const avg = parseFloat(cardElement.getAttribute('data-avg'));
+        const topics = cardElement.getAttribute('data-topics');
+
+        // Populate basic text fields
+        document.getElementById('ovSubject').innerText = subject;
+        document.getElementById('ovDate').innerText = date;
+        document.getElementById('ovMarksDisplay').innerText = marks + '/' + total;
+        document.getElementById('ovPercentDisplay').innerText = percent + '%';
+        document.getElementById('ovMarksVal').innerText = marks;
+        document.getElementById('ovAvgVal').innerText = avg;
+        document.getElementById('ovHighVal').innerText = total;
+        document.getElementById('ovTopics').innerText = topics;
+
+        // Open Overlay
+        overlay.classList.add('active');
+
+        // Animate Bars (Small delay to ensure transition happens after display)
+        setTimeout(() => {
+            // Calculate percentages relative to total marks
+            const marksPercent = (marks / total) * 100;
+            const avgPercent = (avg / total) * 100;
+            
+            document.getElementById('barObtained').style.width = marksPercent + '%';
+            document.getElementById('barAvg').style.width = avgPercent + '%';
+        }, 100);
+    }
+
+    function closePerfDetails() {
+        const overlay = document.getElementById('perfOverlay');
+        overlay.classList.remove('active');
+
+        // Reset bars to 0 for next animation
+        setTimeout(() => {
+            document.getElementById('barObtained').style.width = '0%';
+            document.getElementById('barAvg').style.width = '0%';
+        }, 300); // Wait for slide out animation
+    }
+</script>
+
+</body>
+</html>
