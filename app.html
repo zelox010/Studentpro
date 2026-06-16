@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eureka Careers</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Roboto', 'Google Sans', sans-serif;
+      background: #eeeeee;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ══ TOP BAR ══ */
+    #topbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 58px;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 0 16px;
+      z-index: 900;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    #page-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #111;
+      letter-spacing: 0.2px;
+    }
+
+    /* ══ HAMBURGER ══ */
+    #hamburger {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+    .bar {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: #000;
+      border-radius: 2px;
+      transition: transform 0.32s cubic-bezier(0.4,0,0.2,1),
+                  opacity  0.32s cubic-bezier(0.4,0,0.2,1);
+    }
+    #hamburger.open .bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    #hamburger.open .bar:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    #hamburger.open .bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* ══ OVERLAY ══ */
+    #overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+    #overlay.active { opacity: 1; pointer-events: all; }
+
+    /* ══ DRAWER ══ */
+    #drawer {
+      position: fixed;
+      top: 0; left: 0;
+      width: 288px;
+      height: 100%;
+      background: #ffffff;
+      z-index: 1050;
+      transform: translateX(-100%);
+      transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+      overflow-y: auto; overflow-x: hidden;
+      box-shadow: 2px 0 28px rgba(0,0,0,0.16);
+    }
+    #drawer.open { transform: translateX(0); }
+    #drawer::-webkit-scrollbar { width: 4px; }
+    #drawer::-webkit-scrollbar-thumb { background: #ddd; border-radius: 4px; }
+
+    /* Profile */
+    .profile-section { padding: 52px 22px 22px; }
+    .avatar-wrap {
+      width: 66px; height: 66px;
+      border-radius: 50%; overflow: hidden;
+      margin-bottom: 14px; background: #b8bfc8;
+    }
+    .avatar-wrap svg { width: 100%; height: 100%; display: block; }
+    .profile-name {
+      font-size: 17px; font-weight: 700;
+      letter-spacing: 0.7px; color: #111111;
+      margin-bottom: 3px; text-transform: uppercase;
+    }
+    .profile-sub { font-size: 13.5px; color: #7a7a7a; }
+
+    /* Nav */
+    .nav-list { list-style: none; padding: 6px 10px 32px; }
+    .nav-item {
+      display: flex; align-items: center; gap: 20px;
+      padding: 15px 18px; border-radius: 50px;
+      cursor: pointer; margin-bottom: 2px;
+      transition: background 0.18s ease;
+      user-select: none;
+    }
+    .nav-item:hover:not(.active) { background: #f0f0f0; }
+    .nav-item.active { background: #e8f0fe; }
+    .nav-icon { width: 22px; height: 22px; fill: #5f6368; flex-shrink: 0; transition: fill 0.18s; }
+    .nav-item.active .nav-icon { fill: #1a6ef5; }
+    .nav-label { font-size: 14.5px; color: #3c3c3c; font-weight: 400; transition: color 0.18s; }
+    .nav-item.active .nav-label { color: #1a6ef5; font-weight: 500; }
+
+    /* ══ PAGE SYSTEM ══ */
+    #app { margin-top: 58px; }
+    .page {
+      display: none;
+      min-height: calc(100vh - 58px);
+      background: #eeeeee;
+      animation: fadeIn 0.22s ease;
+    }
+    .page.active { display: block; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ══ SHARED COMPONENTS ══ */
+
+    /* Empty state */
+    .empty-state {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 40px;
+      min-height: 180px;
+      color: #aaa;
+      font-size: 14px;
+      letter-spacing: 0.2px;
+    }
+
+    /* Standard card */
+    .card {
+      background: #fff;
+      border-radius: 14px;
+      margin: 0 14px 10px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    /* Purple icon circle */
+    .icon-circle {
+      width: 50px; height: 50px;
+      border-radius: 50%;
+      background: #7248C4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .icon-circle svg { width: 26px; height: 26px; fill: #fff; }
+
+    /* Card text */
+    .card-body { flex: 1; min-width: 0; }
+    .card-title { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 2px; line-height: 1.35; }
+    .card-sub   { font-size: 13px; color: #555; margin-bottom: 2px; }
+    .card-meta  { font-size: 13px; color: #555; }
+
+    /* Search bar area */
+    .search-wrap {
+      background: #fff;
+      padding: 10px 14px 12px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    .search-bar {
+      display: flex; align-items: center; gap: 10px;
+      background: #f0f0f0;
+      border-radius: 50px;
+      padding: 10px 16px;
+    }
+    .search-bar svg { width: 20px; height: 20px; fill: #888; flex-shrink: 0; }
+    .search-bar input {
+      border: none; background: transparent; outline: none;
+      font-size: 14.5px; color: #444; width: 100%;
+      font-family: inherit;
+    }
+    .search-bar input::placeholder { color: #aaa; }
+
+    /* Section heading */
+    .section-label {
+      font-size: 15px; font-weight: 600; color: #222;
+      padding: 16px 16px 8px;
+    }
+
+    /* ══ MESSAGES PAGE ══ */
+    .fab {
+      position: fixed;
+      bottom: 28px; left: 20px;
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: #111;
+      border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+      z-index: 200;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .fab:hover  { background: #2a2a2a; transform: scale(1.06); }
+    .fab:active { transform: scale(0.96); }
+    .fab svg { width: 22px; height: 22px; fill: #fff; }
+    .fab-hidden { display: none !important; }
+
+    /* ══ PERFORMANCES PAGE ══ */
+    .date-label {
+      text-align: center;
+      font-size: 13px;
+      color: #aaa;
+      padding: 18px 0 8px;
+      letter-spacing: 0.2px;
+    }
+    #page-performances { padding-bottom: 20px; }
+    #page-performances .card { align-items: flex-start; }
+    #page-performances .icon-circle { margin-top: 2px; }
+
+    /* ══ ADMISSIONS PAGE ══ */
+    #page-admissions { padding: 14px 0; }
+
+    /* ══ DOCUMENTS PAGE ══ */
+    .doc-card {
+      background: #fff;
+      border-radius: 14px;
+      margin: 0 14px 10px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    .pdf-badge {
+      width: 42px; height: 42px;
+      border-radius: 7px;
+      background: #3d3d3d;
+      color: #fff;
+      font-size: 9.5px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      letter-spacing: 0.5px;
+      flex-shrink: 0;
+    }
+    .doc-body { flex: 1; min-width: 0; }
+    .doc-title {
+      font-size: 13.5px; font-weight: 700;
+      color: #111;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-transform: uppercase;
+    }
+    .doc-meta  { font-size: 12px; color: #777; margin-bottom: 4px; }
+    .doc-desc  { font-size: 12px; color: #555; text-transform: uppercase; line-height: 1.45; }
+    .dl-btn {
+      background: none; border: none; cursor: pointer;
+      padding: 4px 2px; flex-shrink: 0; margin-left: 2px;
+    }
+    .dl-btn svg { width: 22px; height: 22px; fill: #555; display: block; }
+
+    /* ══ VIDEOS PAGE ══ */
+    #page-videos .empty-state { padding-top: 40px; }
+  </style>
+</head>
+<body>
+
+<!-- ══════════ TOP BAR ══════════ -->
+<header id="topbar">
+  <button id="hamburger" onclick="toggleDrawer()" aria-label="Toggle menu">
+    <span class="bar"></span>
+    <span class="bar"></span>
+    <span class="bar"></span>
+  </button>
+  <h1 id="page-title">Messages</h1>
+</header>
+
+<!-- ══════════ OVERLAY ══════════ -->
+<div id="overlay" onclick="toggleDrawer()"></div>
+
+<!-- ══════════ DRAWER ══════════ -->
+<nav id="drawer">
+  <div class="profile-section">
+    <div class="avatar-wrap">
+      <svg viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+        <rect width="66" height="66" fill="#b0b8c4"/>
+        <circle cx="33" cy="26" r="13" fill="#7c8b9c"/>
+        <ellipse cx="33" cy="58" rx="22" ry="16" fill="#7c8b9c"/>
+      </svg>
+    </div>
+    <div class="profile-name">ABAAN SHAIKH</div>
+    <div class="profile-sub">Eureka Careers LLP</div>
+  </div>
+
+  <ul class="nav-list">
+    <li class="nav-item active" data-target="messages" data-label="Messages" onclick="navigate(this)">
+      <svg class="nav-icon" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+      <span class="nav-label">Messages</span>
+    </li>
+    <li class="nav-item" data-target="schedules" data-label="Schedules" onclick="navigate(this)">
+      <svg class="nav-icon" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5C3.9 4 3.01 4.9 3.01 6L3 20c0 1.1.89 2 1.99 2H19c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V9h14v10zM5 7V6h14v1H5zM7 11h5v5H7z"/></svg>
+      <span class="nav-label">Schedules</span>
+    </li>
+    <li class="nav-item" data-target="attendances" data-label="Attendances" onclick="navigate(this)">
+      <svg class="nav-icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+      <span class="nav-label">Attendances</span>
+    </li>
+    <li class="nav-item" data-target="punches" data-label="Punches" onclick="navigate(this)">
+      <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>
+      <span class="nav-label">Punches</span>
+    </li>
+    <li class="nav-item" data-target="performances" data-label="Performances" onclick="navigate(this)">
+      <svg class="nav-icon" viewBox="0 0 24 24"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94.63 1.5 1.98 2.63 3.61 2.96V19H7v2h10v-2h-4v-3.1c1.63-.33 2.98-1.46 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM7 10.82C5.84 10.4 5 9.3 5 8V7h2v3.82zM19 8c0 1.3-.84 2.4-2 2.82V7h2v1z"/></svg>
+      <span class="nav-label">Performances</span>
+    </li>
+    <li class="nav-item" data-target="assignments" data-label="Assignments" onclick="navigate(this)">
+      <svg class="nav-icon" viewBox="0 0 24 24"><path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z"/></svg>
+      <span class="nav-label">Assignments</span>
+    </li>
+    <li class="nav-item" data-target="documents" data-label="Documents" onclick="navigate(this)">
+      <svg class="nav-icon" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+      <span class="nav-label">Documents</span>
+    </li>
+    <li class="nav-item" data-target="videos" data-label="Videos" onclick="navigate(this)">
+      <svg class="nav-icon" viewBox="0 0 24 24"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>
+      <span class="nav-label">Videos</span>
+    </li>
+    <li class="nav-item" data-target="admissions" data-label="Admissions" onclick="navigate(this)">
+      <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
+      <span class="nav-label">Admissions</span>
+    </li>
+    <li class="nav-item" data-target="feedback" data-label="Feedback" onclick="navigate(this)">
+      <svg class="nav-icon" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 9h-2V5h2v6zm0 4h-2v-2h2v2z"/></svg>
+      <span class="nav-label">Feedback</span>
+    </li>
+    <li class="nav-item" data-target="profile" data-label="Profile" onclick="navigate(this)">
+      <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+      <span class="nav-label">Profile</span>
+    </li>
+    <li class="nav-item" data-target="accounts" data-label="Accounts" onclick="navigate(this)">
+      <svg class="nav-icon" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+      <span class="nav-label">Accounts</span>
+    </li>
+  </ul>
+</nav>
+
+<!-- ══════════ FAB (Messages) ══════════ -->
+<button class="fab" id="fab" title="Refresh">
+  <svg viewBox="0 0 24 24">
+    <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/>
+  </svg>
+</button>
+
+<!-- ══════════ PAGES ══════════ -->
+<div id="app">
+
+  <!-- MESSAGES -->
+  <div class="page active" id="page-messages">
+    <div class="empty-state">No more messages</div>
+  </div>
+
+  <!-- SCHEDULES -->
+  <div class="page" id="page-schedules">
+    <div class="empty-state">No schedules available.</div>
+  </div>
+
+  <!-- ATTENDANCES -->
+  <div class="page" id="page-attendances">
+    <div class="empty-state">No attendance records.</div>
+  </div>
+
+  <!-- PUNCHES -->
+  <div class="page" id="page-punches">
+    <div class="empty-state">No punch records.</div>
+  </div>
+
+  <!-- PERFORMANCES -->
+  
+      <p class="date-label">17 June, 2026</p>
+    <div class="card">
+      <div class="icon-circle">
+        <svg viewBox="0 0 24 24"><path d="M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zm5.6 8H19v6h-2.8v-6z"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="card-title">TEST SERIES I (GEOMETRY) (Maths-II)</div>
+        <div class="card-sub">Geometry</div>
+        <div class="card-meta">Marks: 31.0&nbsp;&nbsp;77.5%&nbsp;&nbsp;&nbsp;Rank: 6</div>
+      </div>
+    </div>
+    
+  
+  <div class="page" id="page-performances">
+
+    <p class="date-label">24 May, 2026</p>
+    <div class="card">
+      <div class="icon-circle">
+        <svg viewBox="0 0 24 24"><path d="M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zm5.6 8H19v6h-2.8v-6z"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="card-title">TEST SERIES I - ENGLISH (English)</div>
+        <div class="card-sub">English</div>
+        <div class="card-meta">Marks: 34.0&nbsp;&nbsp;42.5%&nbsp;&nbsp;&nbsp;Rank: 35</div>
+      </div>
+    </div>
+
+    <p class="date-label">20 May, 2026</p>
+    <div class="card">
+      <div class="icon-circle">
+        <svg viewBox="0 0 24 24"><path d="M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zm5.6 8H19v6h-2.8v-6z"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="card-title">TEST SERIES I (HINDI) (Hindi)</div>
+        <div class="card-sub">Hindi</div>
+        <div class="card-meta">Marks: 12.0&nbsp;&nbsp;15.0%&nbsp;&nbsp;&nbsp;Rank: 37</div>
+      </div>
+    </div>
+
+    <p class="date-label">10 May, 2026</p>
+    <div class="card">
+      <div class="icon-circle">
+        <svg viewBox="0 0 24 24"><path d="M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zm5.6 8H19v6h-2.8v-6z"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="card-title">TEST SERIES I (ALGEBRA) (Algebra)</div>
+        <div class="card-sub">Algebra</div>
+        <div class="card-meta">Marks: 7.0&nbsp;&nbsp;17.5%&nbsp;&nbsp;&nbsp;Rank: 32</div>
+      </div>
+    </div>
+
+    <p class="date-label">03 May, 2026</p>
+    <div class="card">
+      <div class="icon-circle">
+        <svg viewBox="0 0 24 24"><path d="M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zm5.6 8H19v6h-2.8v-6z"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="card-title">TEST SERIES I (GEOGRAPHY) (Geography/Economics)</div>
+        <div class="card-sub">Geography/Economics</div>
+        <div class="card-meta">Marks: 20.5&nbsp;&nbsp;51.25%&nbsp;&nbsp;&nbsp;Rank: 30</div>
+      </div>
+    </div>
+
+    <p class="date-label">26 Apr, 2026</p>
+    <div class="card">
+      <div class="icon-circle">
+        <svg viewBox="0 0 24 24"><path d="M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zm5.6 8H19v6h-2.8v-6z"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="card-title">TEST SERIES I (MARATHI) (Marathi)</div>
+        <div class="card-sub">Marathi</div>
+        <div class="card-meta">Marks: 2.5&nbsp;&nbsp;3.13%&nbsp;&nbsp;&nbsp;Rank: 32</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ASSIGNMENTS -->
+  <div class="page" id="page-assignments">
+    <div class="empty-state">No assignments available.</div>
+  </div>
+
+  <!-- DOCUMENTS -->
+  <div class="page" id="page-documents">
+    <div class="search-wrap">
+      <div class="search-bar">
+        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        <input type="text" placeholder="Search documents...">
+      </div>
+    </div>
+    <div class="section-label">Documents</div>
+    <div class="doc-card">
+      <div class="pdf-badge">PDF</div>
+      <div class="doc-body">
+        <div class="doc-title">X STD. - SERIES-I - MARATHI (2,...</div>
+        <div class="doc-meta">568.7 KB &bull; May 21, 2026</div>
+        <div class="doc-desc">X STD. SERIES-I. MARATHI (CHP 2,3,R.R 1) TEST PAPER (TEST DATE - 26 APRIL 2026) (SET A,B)</div>
+      </div>
+      <button class="dl-btn" title="Download">
+        <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+      </button>
+    </div>
+    <div class="doc-card">
+      <div class="pdf-badge">PDF</div>
+      <div class="doc-body">
+        <div class="doc-title">X - ENGLISH APPRECIATION O...</div>
+        <div class="doc-meta">241.0 KB &bull; May 21, 2026</div>
+        <div class="doc-desc">X - ENGLISH APRRECIATION OF ALL THE POEMS</div>
+      </div>
+      <button class="dl-btn" title="Download">
+        <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- VIDEOS -->
+  <div class="page" id="page-videos">
+    <div class="search-wrap">
+      <div class="search-bar">
+        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        <input type="text" placeholder="Search videos...">
+      </div>
+    </div>
+    <div class="empty-state">No videos in this folder.</div>
+  </div>
+
+  <!-- ADMISSIONS -->
+  <div class="page" id="page-admissions">
+    <div class="card">
+      <div class="icon-circle">
+        <svg viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="card-title">IX SB (25-26)</div>
+        <div class="card-meta">Paid: Rs. 32200.0&nbsp;&nbsp;&nbsp;Balance: Rs. 0.0</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="icon-circle">
+        <svg viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="card-title">X SB (26-27)</div>
+        <div class="card-meta">Paid: Rs. 47000.0&nbsp;&nbsp;&nbsp;Balance: Rs. 0.0</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEEDBACK -->
+  <div class="page" id="page-feedback">
+    <div class="empty-state">No feedback yet.</div>
+  </div>
+
+  <!-- PROFILE -->
+  <div class="page" id="page-profile">
+    <div class="empty-state">Profile coming soon.</div>
+  </div>
+
+  <!-- ACCOUNTS -->
+  <div class="page" id="page-accounts">
+    <div class="empty-state">No accounts found.</div>
+  </div>
+
+</div><!-- #app -->
+
+<script>
+  const drawer    = document.getElementById('drawer');
+  const overlay   = document.getElementById('overlay');
+  const hamburger = document.getElementById('hamburger');
+  const fab       = document.getElementById('fab');
+
+  function toggleDrawer() {
+    const open = drawer.classList.toggle('open');
+    overlay.classList.toggle('active', open);
+    hamburger.classList.toggle('open', open);
+  }
+
+  function navigate(el) {
+    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+
+    const label  = el.dataset.label;
+    const target = el.dataset.target;
+
+    document.getElementById('page-title').textContent = label;
+
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const page = document.getElementById('page-' + target);
+    if (page) page.classList.add('active');
+
+    // Show FAB only on Messages page
+    fab.style.display = (target === 'messages') ? 'flex' : 'none';
+
+    // Close drawer
+    drawer.classList.remove('open');
+    overlay.classList.remove('active');
+    hamburger.classList.remove('open');
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && drawer.classList.contains('open')) toggleDrawer();
+  });
+</script>
+</body>
+</html>
