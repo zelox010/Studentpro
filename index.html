@@ -378,35 +378,367 @@
 
   <!-- SCHEDULES -->
   <div class="page" id="page-schedules">
-    <div class="empty-state">No schedules available.</div>
+    <style>
+      .filter-chips-wrap {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        padding: 16px 14px 4px;
+      }
+      .filter-chip {
+        background: #ffffff;
+        border: 1px solid #7248C4;
+        color: #7248C4;
+        border-radius: 50px;
+        padding: 8px 20px;
+        font-size: 14px;
+        font-weight: 400;
+        cursor: pointer;
+        font-family: inherit;
+      }
+      .section-date-label {
+        text-align: center;
+        font-size: 13.5px;
+        color: #757575;
+        padding: 24px 0 12px;
+        font-weight: 400;
+      }
+      .schedule-card {
+        background: #ffffff;
+        border-radius: 16px;
+        margin: 0 16px 12px;
+        padding: 18px 16px;
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      }
+      .schedule-icon-circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #7248C4;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+      .schedule-icon-circle svg {
+        width: 20px;
+        height: 20px;
+        fill: #ffffff;
+      }
+      .schedule-body {
+        flex: 1;
+        min-width: 0;
+      }
+      .schedule-title {
+        font-size: 16px;
+        font-weight: 500;
+        color: #111111;
+        margin-bottom: 5px;
+      }
+      .schedule-details {
+        font-size: 13px;
+        color: #3c3c3c;
+        line-height: 1.5;
+      }
+      .schedule-topics {
+        color: #555555;
+      }
+      .bottom-state-text {
+        text-align: center;
+        font-size: 13.5px;
+        color: #757575;
+        padding: 32px 0;
+      }
+    </style>
+
+    <div class="filter-chips-wrap">
+      <button class="filter-chip">12 Jun 2026</button>
+      <button class="filter-chip">18 Jun 2026</button>
+    </div>
+
+    <p class="section-date-label">12 Jun 2026</p>
+
+    <!-- Card 1 -->
+    <div class="schedule-card">
+      <div class="schedule-icon-circle">
+        <svg viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0-2-.9-2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/></svg>
+      </div>
+      <div class="schedule-body">
+        <div class="schedule-title">X SB Marathi</div>
+        <div class="schedule-details">
+          Lecture • 05:45 PM - 07:05 PM<br>
+          Prof. MADHAVI DESAI<br>
+          <span class="schedule-topics">Topics:</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="schedule-card">
+      <div class="schedule-icon-circle">
+        <svg viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0-2-.9-2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/></svg>
+      </div>
+      <div class="schedule-body">
+        <div class="schedule-title">X SB History/Civics</div>
+        <div class="schedule-details">
+          Lecture • 07:05 PM - 08:30 PM<br>
+          Mrs. DEEPA DANI<br>
+          <span class="schedule-topics">Topics:</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="bottom-state-text">No more schedules</p>
   </div>
+  
 
   <!-- ATTENDANCES -->
+    <!-- ATTENDANCES -->
   <div class="page" id="page-attendances">
-    <div class="empty-state">No attendance records.</div>
+    <style>
+      .attendance-card {
+        background: #ffffff;
+        border-radius: 16px;
+        margin: 0 16px 12px;
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      }
+      .attendance-icon-circle {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: #52d369;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .attendance-icon-circle svg {
+        width: 22px;
+        height: 22px;
+        fill: #ffffff;
+      }
+      .attendance-body {
+        flex: 1;
+        min-width: 0;
+      }
+      .attendance-title {
+        font-size: 16px;
+        font-weight: 400;
+        color: #111111;
+        margin-bottom: 3px;
+      }
+      .attendance-time {
+        font-size: 12.5px;
+        color: #555555;
+      }
+    </style>
+
+    <div class="filter-chips-wrap">
+      <button class="filter-chip">6 Jun 2026</button>
+      <button class="filter-chip">12 Jun 2026</button>
+    </div>
+
+    <!-- Group 1 -->
+    <p class="section-date-label">06 Jun 2026</p>
+    <div class="attendance-card">
+      <div class="attendance-icon-circle">
+        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+      </div>
+      <div class="attendance-body">
+        <div class="attendance-title">X SB - Geometry</div>
+        <div class="attendance-time">02:45 PM - 04:05 PM</div>
+      </div>
+    </div>
+    <div class="attendance-card">
+      <div class="attendance-icon-circle">
+        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+      </div>
+      <div class="attendance-body">
+        <div class="attendance-title">X SB - English</div>
+        <div class="attendance-time">04:05 PM - 05:30 PM</div>
+      </div>
+    </div>
+
+    <!-- Group 2 -->
+    <p class="section-date-label">08 Jun 2026</p>
+    <div class="attendance-card">
+      <div class="attendance-icon-circle">
+        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+      </div>
+      <div class="attendance-body">
+        <div class="attendance-title">X SB - History/Civics</div>
+        <div class="attendance-time">05:45 PM - 07:05 PM</div>
+      </div>
+    </div>
+    <div class="attendance-card">
+      <div class="attendance-icon-circle">
+        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+      </div>
+      <div class="attendance-body">
+        <div class="attendance-title">X SB - Science I</div>
+        <div class="attendance-time">07:05 PM - 08:30 PM</div>
+      </div>
+    </div>
+
+    <!-- Group 3 -->
+    <p class="section-date-label">10 Jun 2026</p>
+    <div class="attendance-card">
+      <div class="attendance-icon-circle">
+        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+      </div>
+      <div class="attendance-body">
+        <div class="attendance-title">X SB - Algebra</div>
+        <div class="attendance-time">05:45 PM - 07:05 PM</div>
+      </div>
+    </div>
+    <div class="attendance-card">
+      <div class="attendance-icon-circle">
+        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+      </div>
+      <div class="attendance-body">
+        <div class="attendance-title">X SB - Marathi</div>
+        <div class="attendance-time">07:05 PM - 08:30 PM</div>
+      </div>
+    </div>
+
+    <p class="bottom-state-text">No more attendances</p>
   </div>
+  
 
   <!-- PUNCHES -->
   <div class="page" id="page-punches">
     <div class="empty-state">No punch records.</div>
   </div>
 
+  <div class="page" id="page-feedback">
+    <style>
+      .feedback-box {
+        background: #ffffff;
+        border-radius: 22px;
+        margin: 24px 16px;
+        padding: 28px 24px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        font-family: 'Roboto', 'Google Sans', sans-serif;
+      }
+      .feedback-title {
+        font-size: 24px;
+        font-weight: 400;
+        color: #000000;
+        margin-bottom: 6px;
+        letter-spacing: -0.2px;
+      }
+      .feedback-desc {
+        font-size: 13.5px;
+        color: #4a4a4a;
+        line-height: 1.45;
+        margin-bottom: 24px;
+      }
+      .feedback-input-container {
+        width: 100%;
+      }
+      .feedback-field {
+        width: 100%;
+        height: 56px;
+        border: 1px solid #767676;
+        border-radius: 6px;
+        padding: 16px;
+        font-size: 15px;
+        color: #111111;
+        font-family: inherit;
+        resize: none;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .feedback-field:focus {
+        border-color: #1a6ef5;
+      }
+      .feedback-field::placeholder {
+        color: #4a4a4a;
+      }
+      .feedback-counter-text {
+        text-align: right;
+        font-size: 11.5px;
+        color: #757575;
+        margin-top: 6px;
+        margin-bottom: 24px;
+        letter-spacing: 0.1px;
+      }
+      .feedback-btn {
+        width: 100%;
+        background: #e2e0e1;
+        color: #8e8c8d;
+        border: none;
+        border-radius: 50px;
+        padding: 14px;
+        font-size: 15px;
+        font-weight: 400;
+        cursor: default;
+        text-align: center;
+        transition: background 0.2s, color 0.2s;
+      }
+      /* Active state when user starts typing */
+      .feedback-btn.ready {
+        background: #111111;
+        color: #ffffff;
+        cursor: pointer;
+      }
+    </style>
+
+    <div class="feedback-box">
+      <h2 class="feedback-title">How was your experience?</h2>
+      <p class="feedback-desc">Share your feedback with us. We are continuously working on improving your experience.</p>
+      
+      <div class="feedback-input-container">
+        <textarea class="feedback-field" placeholder="Your Feedback" id="feedbackTextarea" maxlength="1000" oninput="handleFeedbackInput()"></textarea>
+        <div class="feedback-counter-text"><span id="currentCount">0</span>/1000 characters</div>
+      </div>
+
+      <button class="feedback-btn" id="feedbackSubmitBtn" type="button">Submit</button>
+    </div>
+
+    <script>
+      function handleFeedbackInput() {
+        const textarea = document.getElementById('feedbackTextarea');
+        const counter = document.getElementById('currentCount');
+        const submitBtn = document.getElementById('feedbackSubmitBtn');
+        
+        // Update character counter text live
+        const currentLength = textarea.value.length;
+        counter.textContent = currentLength;
+        
+        // Match standard form behavior: Light up button when text exists
+        if (currentLength > 0) {
+          submitBtn.classList.add('ready');
+        } else {
+          submitBtn.classList.remove('ready');
+        }
+      }
+    </script>
+  </div>
+
   <!-- PERFORMANCES -->
-  
-      <p class="date-label">17 June, 2026</p>
+    
+  <div class="page" id="page-performances">
+
+<p class="date-label">17 June, 2026</p>
     <div class="card">
       <div class="icon-circle">
         <svg viewBox="0 0 24 24"><path d="M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zm5.6 8H19v6h-2.8v-6z"/></svg>
       </div>
       <div class="card-body">
-        <div class="card-title">TEST SERIES I (GEOMETRY) (Maths-II)</div>
+        <div class="card-title">TEST SERIES I (Geometry) (Maths-II)</div>
         <div class="card-sub">Geometry</div>
         <div class="card-meta">Marks: 31.0&nbsp;&nbsp;77.5%&nbsp;&nbsp;&nbsp;Rank: 6</div>
       </div>
     </div>
-    
-  
-  <div class="page" id="page-performances">
 
     <p class="date-label">24 May, 2026</p>
     <div class="card">
@@ -547,9 +879,208 @@
   </div>
 
   <!-- PROFILE -->
+    <!-- PROFILE -->
   <div class="page" id="page-profile">
-    <div class="empty-state">Profile coming soon.</div>
+    <style>
+      .profile-container {
+        padding: 16px 14px;
+      }
+      .profile-header-card {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 24px;
+        text-align: center;
+        margin-bottom: 16px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      }
+      .profile-blank-avatar {
+        width: 86px;
+        height: 86px;
+        border-radius: 50%;
+        background: #e0e0e0;
+        margin: 0 auto 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .profile-blank-avatar svg {
+        width: 52px;
+        height: 52px;
+        fill: #b5b5b5;
+      }
+      .profile-main-name {
+        font-size: 22px;
+        font-weight: 700;
+        color: #111111;
+        margin-bottom: 4px;
+        letter-spacing: 0.2px;
+      }
+      .profile-status {
+        font-size: 14px;
+        color: #757575;
+      }
+      .profile-block {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 20px 18px 8px;
+        margin-bottom: 16px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      }
+      .profile-block-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: #000000;
+        margin-bottom: 12px;
+      }
+      .profile-row {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding: 14px 2px;
+        border-bottom: 1px solid #f3f3f3;
+      }
+      .profile-row:last-child {
+        border-bottom: none;
+      }
+      .profile-row-icon {
+        width: 24px;
+        height: 24px;
+        fill: #424242;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .profile-row-icon svg {
+        width: 100%;
+        height: 100%;
+      }
+      .profile-row-content {
+        flex: 1;
+        min-width: 0;
+      }
+      .profile-row-label {
+        font-size: 15px;
+        font-weight: 400;
+        color: #111111;
+        margin-bottom: 2px;
+      }
+      .profile-row-value {
+        font-size: 13.5px;
+        color: #616161;
+      }
+      .profile-row-text {
+        font-size: 15px;
+        font-weight: 400;
+        color: #111111;
+        flex: 1;
+      }
+      .profile-row-chevron {
+        width: 20px;
+        height: 20px;
+        fill: #616161;
+      }
+    </style>
+
+    <div class="profile-container">
+      
+      <!-- Top Overview Header -->
+      <div class="profile-header-card">
+        <div class="profile-blank-avatar">
+          <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        </div>
+        <div class="profile-main-name">ABAAN SHAIKH</div>
+        <div class="profile-status">Not available</div>
+      </div>
+
+      <!-- Personal Info Section -->
+      <div class="profile-block">
+        <h3 class="profile-block-title">Personal Information</h3>
+        
+        <!-- Full Name -->
+        <div class="profile-row">
+          <div class="profile-row-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+          </div>
+          <div class="profile-row-content">
+            <div class="profile-row-label">Full Name</div>
+            <div class="profile-row-value">ABAAN SHAIKH</div>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="profile-row">
+          <div class="profile-row-icon">
+            <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+          </div>
+          <div class="profile-row-content">
+            <div class="profile-row-label">Email</div>
+            <div class="profile-row-value">Not available</div>
+          </div>
+        </div>
+
+        <!-- Phone -->
+        <div class="profile-row">
+          <div class="profile-row-icon">
+            <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+          </div>
+          <div class="profile-row-content">
+            <div class="profile-row-label">Phone</div>
+            <div class="profile-row-value">+919967754623</div>
+          </div>
+        </div>
+
+        <!-- DOB -->
+        <div class="profile-row">
+          <div class="profile-row-icon">
+            <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
+          </div>
+          <div class="profile-row-content">
+            <div class="profile-row-label">Date of Birth</div>
+            <div class="profile-row-value">24/8/2011</div>
+          </div>
+        </div>
+
+        <!-- Gender -->
+        <div class="profile-row">
+          <div class="profile-row-icon">
+            <svg viewBox="0 0 24 24"><path d="M16 2v2h3.59l-4.83 4.83C13.73 7.74 12.44 7 11 7c-3.87 0-7 3.13-7 7s3.13 7 7 7 7-3.13 7-7c0-1.44-.74-2.73-1.83-3.76L19 5.41V9h2V2h-5zm-5 17c-2.76 0-5-2.76-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
+          </div>
+          <div class="profile-row-content">
+            <div class="profile-row-label">Gender</div>
+            <div class="profile-row-value">Male</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Account Settings Section -->
+      <div class="profile-block">
+        <h3 class="profile-block-title">Account Settings</h3>
+        
+        <!-- Password Change -->
+        <div class="profile-row" style="cursor: pointer;">
+          <div class="profile-row-icon">
+            <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+          </div>
+          <div class="profile-row-text">Change Password</div>
+          <svg class="profile-row-chevron" viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+        </div>
+
+        <!-- Logout -->
+        <div class="profile-row" style="cursor: pointer;">
+          <div class="profile-row-icon">
+            <svg viewBox="0 0 24 24"><path d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59zM19 3H5c-1.11 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
+          </div>
+          <div class="profile-row-text">Logout</div>
+          <svg class="profile-row-chevron" viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+        </div>
+
+      </div>
+
+    </div>
   </div>
+  
 
   <!-- ACCOUNTS -->
   <div class="page" id="page-accounts">
@@ -597,4 +1128,4 @@
   });
 </script>
 </body>
-</html>
+  </html>
